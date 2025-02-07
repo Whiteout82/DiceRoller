@@ -9,3 +9,5 @@ Let me know of any issues you have.
 v.1 first run of code
 
 v.2 Added config for limits on dice and sides
+
+v.3 Syntax Fix
