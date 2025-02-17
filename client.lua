@@ -39,7 +39,7 @@ function ShowRoll(text, sourceId, maxDistance, location)
     local dist = #(location - coords)
 
     if dist < Config.Distance then
-        local dispaly = true
+        local display = true
     Citizen.CreateThread(function()
         Wait(Config.DisplayTime * 1000)
         display = false
