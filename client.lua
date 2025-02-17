@@ -36,7 +36,7 @@ end
 
 function ShowRoll(text, sourceId, maxDistance, location)
     local coords = GetEntityCoords(globalPlayerPedId, false)
-    local = dist = #(location - coords)
+    local dist = #(location - coords)
 
     if dist < Config.Distance then
         local dispaly = true
@@ -51,9 +51,9 @@ function ShowRoll(text, sourceId, maxDistance, location)
             Wait(7)
         local currentcoords = GetEntityCoords(serverPed)
             DrawText3D(currentcoords.x, currentcoords.y, currentcoords.z + Config.Offset - 1.25, text)
-        end
-    end)
-
+            end
+        end)
+    end
 end
 
 function DrawText3D(x, y, z, text)
