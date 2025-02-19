@@ -9,12 +9,14 @@ Citizen.CreatThread(function()
 end
 end)
 
-RegisterNetEVent("DiceRoller:Client:Roll")
+RegisterNetEvent("DiceRoller:Client:Roll")
 AddEventHandler("DiceRoller:Client:Roll", function(sourceId, maxDistance, rollTable, sides, location)
     local rollString = CreateRollString(rollTable, sides)
     globalPlayerPedId = GetPlayerPed(-1)
-
-ShowRoll(rollString, sourceId, maxDistance, location)
+    if(location.x == 0.0 and location.y == 0.0 and location.z == 0.0)then 
+        location = GetEntityCoords(GetPlayerPed(GetPlayerFromServerId(sourceId)))
+    end 
+    ShowRoll(rollString, sourceId, maxDistance, location)
 end)
 
 function CreatRollString(rollTable, sides)
@@ -40,6 +42,7 @@ function ShowRoll(text, sourceId, maxDistance, location)
 
     if dist < Config.Distance then
         local display = true
+
     Citizen.CreateThread(function()
         Wait(Config.DisplayTime * 1000)
         display = false

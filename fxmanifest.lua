@@ -4,7 +4,7 @@ rdr3_warning 'I acknowledge that this is a prerelease build of RedM, and I am aw
 
 author "Whiteout"
 description "Dice Rolling script"
-version ".4"
+version ".5"
 
 client_scripts {
     'config.lua',
