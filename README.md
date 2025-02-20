@@ -11,3 +11,7 @@ v.1 first run of code
 v.2 Added config for limits on dice and sides
 
 v.3 Syntax Fix
+
+v.4 Changes to draw Text
+
+v.5 Converted to maybe work in RedM
