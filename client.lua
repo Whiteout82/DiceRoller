@@ -1,4 +1,4 @@
-local globalPlayerPedId = nil
+local RDR = Config.RDR
 
 Citizen.CreatThread(function()
     if(Config.UseCommand) then
@@ -59,26 +59,87 @@ function ShowRoll(text, sourceId, maxDistance, location)
     end
 end
 
-function DrawText3D(x, y, z, text)
-    local onScreen, _x, _y = World3dToScreen2d(x, y, z)
-    local p = GetGameplayCamCoords()
-    local distance = GetDistanceBetweenCoords(p.x, p.y, p.z, x, y, z, 1)
-    local scale = (1 / distance) * 2
-    local fov = (1 / GetGameplayCamFov()) * 100
-    local scale = scale * fov
-    if onScreen then
-        SetTextScale(0.35, 0.35)
-        SetTextFont(4)
-        SetTextProportional(1)
-        SetTextColour(255, 255, 255, 215)
-        SetTextEntry("STRING")
-        SetTextCentre(1)
-        AddTextComponentString(text)
-        DrawText(_x,_y)
-        local factor = (string.len(text)) / 370
-		DrawRect(_x,_y+0.0125, 0.015+ factor, 0.03, 0, 0, 0, 100)
-      end
+function DrawText3D(x, y, z, text, bgAlpha)
+    if RDR then
+        local onScreen, _x, _y = GetScreenCoordFromWorldCoord(x, y, z)
+        local dist = #(GetGameplayCamCoord() - vector3(x, y, z))
+    
+        if GetRenderingCam() ~= -1 then
+            dist = #(GetCamCoord(GetRenderingCam()) - vector3(x, y, z))
+        end
+
+        local scale = (1 / dist) * (IsPedOnFoot(PlayerPedId()) and Config.FootScale or Config.VehicleScale)
+        local fov = (1 / GetGameplayCamFov()) * 100
+        scale = scale * fov
+    
+        if onScreen then
+            SetTextScale(0.0, 0.35 * scale)
+            SetTextColor(255, 255, 255, 255)
+            SetTextDropshadow(0, 0, 0, 0, 255)
+
+            local lineCount = select(2, string.gsub(text, "~n~", "")) + 1
+            local textLength = #text - (bgAlpha ~= 0 and 3 or 0)
+            local endW = 0.005 * textLength / lineCount * scale
+            local textWidth = endW + 0.01 * scale
+            local textHeight = 0.03 * lineCount * scale
+
+            if Config.textureDict ~= '' and Config.textureName ~= '' then
+                local spriteWidth = textWidth
+                local spriteHeight = textHeight
+                DrawSprite(Config.textureDict, Config.textureName, _x, _y + textHeight / 2.2, spriteWidth, spriteHeight, 0, 0, 0, 0, bgAlpha)
+            else
+                local bgColor = {0, 0, 0, bgAlpha}
+                DrawRect(_x, _y + textHeight / 2.2, textWidth, textHeight, bgColor[1], bgColor[2], bgColor[3], bgColor[4])
+            end
+
+            Citizen.InvokeNative(0xADA9255D, Config.Font)
+
+            Citizen.InvokeNative(0xBE5261939FBECB8C, true)
+            Citizen.InvokeNative(0xd79334a4bb99bad1,
+                Citizen.InvokeNative(0xFA925AC00EB830B9, 10, "LITERAL_STRING", text, Citizen.ResultAsLong()), _x, _y)
+        end
+    else
+
+        local onScreen, _x, _y = World3dToScreen2d(x, y, z)
+        local camCoords = GetGameplayCamCoords()
+        local dist = #(camCoords - vector3(x, y, z))
+
+        local scale = (1 / dist) * (IsPedOnFoot(PlayerPedId()) and Config.FootScale or Config.VehicleScale)
+        local fov = (1 / GetGameplayCamFov()) * 100
+        scale = scale * fov
+
+        if onScreen then
+            SetTextScale(0.0, 0.35 * scale)
+            SetTextFont(Config.Font)
+            SetTextProportional(1)
+            SetTextColour(255, 255, 255, 255)
+            SetTextCentre(1)
+
+            local lineCount = select(2, string.gsub(text, "~n~", "")) + 1
+            local textLength = #text - (bgAlpha ~= 0 and 3 or 0)
+            local endW = 0.005 * textLength / lineCount * scale
+            local textWidth = endW + 0.01 * scale
+            local textHeight = 0.03 * lineCount * scale
+
+            if Config.textureDict ~= '' and Config.textureName ~= '' then
+                local spriteWidth = textWidth
+                local spriteHeight = textHeight
+                DrawSprite(Config.textureDict, Config.textureName, _x, _y + textHeight / 2.2, spriteWidth, spriteHeight, 0, 0, 0, 0, bgAlpha)
+            else
+                local bgColor = {0, 0, 0, bgAlpha}
+                DrawRect(_x, _y + textHeight / 2.2, textWidth, textHeight, bgColor[1], bgColor[2], bgColor[3], bgColor[4])
+            end
+
+            SetTextEntry("STRING")
+            AddTextComponentString(text)
+            DrawText(_x, _y)
+        end
+    end
 end
+
+local playerOffsets = {}
+local offsetIncrement = 0.1
+local baseOffset = 0.4
 
 Citizen.CreateThread(function() --Keeps resource usage down
     while true do
