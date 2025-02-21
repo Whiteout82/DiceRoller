@@ -14,4 +14,4 @@ v.3 Syntax Fix
 
 v.4 Changes to draw Text
 
-v.5 Converted to maybe work in RedM
+v.5 Converted to maybe work in RedM (Thanks to crimson-3dme)

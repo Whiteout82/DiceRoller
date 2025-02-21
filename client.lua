@@ -20,23 +20,23 @@ AddEventHandler("DiceRoller:Client:Roll", function(sourceId, maxDistance, rollTa
 end)
 
 function CreatRollString(rollTable, sides)
-    local text = 'Roll: '
+    local message = 'Roll: '
     local total = 0
 
     for k, roll in pairs(rollTable, sides) do
         total = total + roll
         if k == 1 then
-            text = text .. roll .. "/" .. sides
+            message = message .. roll .. "/" .. sides
         else
-            text = text .. " | " .. "/" .. sides
+            message = message .. " | " .. "/" .. sides
         end
     end
 
-    text = text .. " | (Total: "..total..")"
-    return text
+    message = message .. " | (Total: "..total..")"
+    return message
 end
 
-function ShowRoll(text, sourceId, maxDistance, location)
+function ShowRoll(message, sourceId, maxDistance, location)
     local coords = GetEntityCoords(globalPlayerPedId, false)
     local dist = #(location - coords)
 
@@ -53,13 +53,13 @@ function ShowRoll(text, sourceId, maxDistance, location)
         while display do
             Wait(7)
         local currentcoords = GetEntityCoords(serverPed)
-            DrawText3D(currentcoords.x, currentcoords.y, currentcoords.z + Config.Offset - 1.25, text)
+            DrawText3D(currentcoords.x, currentcoords.y, currentcoords.z + Config.Offset - 1.25, message)
             end
         end)
     end
 end
 
-function DrawText3D(x, y, z, text, bgAlpha)
+function DrawText3D(x, y, z, message, bgAlpha)
     if RDR then
         local onScreen, _x, _y = GetScreenCoordFromWorldCoord(x, y, z)
         local dist = #(GetGameplayCamCoord() - vector3(x, y, z))
@@ -98,7 +98,7 @@ function DrawText3D(x, y, z, text, bgAlpha)
             Citizen.InvokeNative(0xd79334a4bb99bad1,
                 Citizen.InvokeNative(0xFA925AC00EB830B9, 10, "LITERAL_STRING", text, Citizen.ResultAsLong()), _x, _y)
         end
-    else
+    --[[else
 
         local onScreen, _x, _y = World3dToScreen2d(x, y, z)
         local camCoords = GetGameplayCamCoords()
@@ -133,7 +133,7 @@ function DrawText3D(x, y, z, text, bgAlpha)
             SetTextEntry("STRING")
             AddTextComponentString(text)
             DrawText(_x, _y)
-        end
+        end]]
     end
 end
 
